@@ -22,80 +22,53 @@ import javax.swing.JOptionPane;
  */
 public class Gatos_Service {
     
-    //Renderiza una imagen dentro de un JOptionPane
-    public void desplegarImagen(Gatos unGato, ImageIcon img) throws IOException{
-        //crear menú d opciones para el JoptionPane
-        String menu =  "Opciones: \n"
-                + "1. Ver otro gato \n"
-                +"2.Regresar \n";
-        
-        String[] opciones = {"Ver otro gato", "Regresar"};
-        
-        String idGato  =unGato.getId();
-        String opcion = (String) JOptionPane.showInputDialog(null, menu, idGato, JOptionPane.INFORMATION_MESSAGE, img, opciones, opciones[0]);
-        
-        int seleccion = -1;
-        for(int i = 0; i<opciones.length; i++){
-        if(opcion.equals(opciones[i])){
-            seleccion = i;
-            
-        }
-    
-    
-    switch( seleccion ){
-        case 0 -> getGatos();
-        default -> {
-                break;
-    }
-    }
-    }
-    }
-    
-     // Recupera gatos de The Cat API
-    public void getGatos() throws IOException {
-        OkHttpClient client = new OkHttpClient();
-        
-        MediaType mediaType = MediaType.parse("text/plain");
-        Request request = new Request.Builder()
-            .url("https://api.thecatapi.com/v1/images/search")
-            .method("GET", null)
-            .build();
-        Response response = client.newCall(request).execute();
-        
-        // Crear un objeto con formato JSON
-        
-        String gatoJson = response.body().string();
-        
-        // Quitar llave inicial y final
-        
-        gatoJson = gatoJson.substring( 1, gatoJson.length() );
-        gatoJson = gatoJson.substring( 0, gatoJson.length() - 1 );
-        
-        System.out.println("gatoJson: " + gatoJson);
-        
-        //Crear un objeto de la clase Gson
-        
-        Gson gson = new Gson();
-        Gatos gato = gson.fromJson( gatoJson, Gatos.class );
-        
+      //Renderiza una imagen dentro de un JOptionPane
+    public void desplegarImagen(Gatos unGato) throws IOException{
+       
         Image image = null;
-        try {
-            URL url = new URL( gato.getUrl() );
-            image = ImageIO.read( url );
+        try{
+            URL url = new URL(unGato.getUrl());
+            image = ImageIO.read(url);
             
+            //Redimensionar la imagen obtenida
             ImageIcon imgGato = new ImageIcon(image);
-            if(imgGato.getIconWidth()>800){
+            if(imgGato.getIconWidth()>700){
                 Image img = imgGato.getImage();
-                Image imgModificada = img.getScaledInstance(700, 500, java.awt.Image.SCALE_SMOOTH);
+                Image imgModificada = img.getScaledInstance(700, 400, java.awt.Image.SCALE_SMOOTH);
                 imgGato = new ImageIcon(imgModificada);
             }
             
-            
-            desplegarImagen(gato, imgGato);
+            String idGato = unGato.getId();
+            JOptionPane.showMessageDialog(null, idGato, "Gato", JOptionPane.INFORMATION_MESSAGE,imgGato);
             
         } catch ( Exception e ) {
             System.out.println("No se pudo crear el objeto Image");
         }
-    }
+        }        
+                
+    //conexión con la API
+    public Gatos getGatos() throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("text/plain");
+        Request request = new Request.Builder()
+                .url("https://api.thecatapi.com/v1/images/search")
+                .method("GET", null)
+                .build();
+        //Toda la información de API
+        Response response = client.newCall(request).execute();
+        
+        //Crear un objeto con formmato  Jso
+        String gatoJson = response.body().string();
+        //Quitar llave inicial y final
+        gatoJson = gatoJson.substring(1,gatoJson.length());
+        gatoJson = gatoJson.substring(0, gatoJson.length()-1);
+        
+        System.out.println("gatoJson: " + gatoJson);
+        //Crear un objeto de la clase json
+        Gson gson = new Gson();
+        Gatos gato = gson.fromJson(gatoJson, Gatos.class);
+        return gato;
+      
+        }
 }
 

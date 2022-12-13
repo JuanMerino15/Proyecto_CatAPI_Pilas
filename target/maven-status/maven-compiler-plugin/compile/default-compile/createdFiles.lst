@@ -1,3 +1,6 @@
-com\mycompany\catproject\CatProject.class
 com\mycompany\catproject\Gatos.class
 com\mycompany\catproject\Gatos_Service.class
+com\mycompany\catproject\Pilas.class
+com\mycompany\catproject\Testing_Pilas.class
+com\mycompany\catproject\CatProject.class
+com\mycompany\catproject\Datos.class
